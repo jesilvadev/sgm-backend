@@ -61,9 +61,9 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///sgm.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Desativa warnings desnecessários
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'troque-esta-chave-por-uma-segura')
-    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    app.config['SESSION_COOKIE_SAMESITE'] = 'None'
     app.config['SESSION_COOKIE_HTTPONLY'] = True
-    app.config['SESSION_COOKIE_SECURE'] = False
+    app.config['SESSION_COOKIE_SECURE'] = True
 
     # Inicializa o banco de dados
     db.init_app(app)
