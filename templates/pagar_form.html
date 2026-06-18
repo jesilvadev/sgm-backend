@@ -1,0 +1,25 @@
+{% extends 'base.html' %} {% block content %}
+<h1>Pagar Dívida</h1>
+<p>Cliente: {{ divida.cliente.nome }}</p>
+<p>Restante atual: R$ {{ '%.2f'|format(divida.saldo_devedor) }}</p>
+<form method="post">
+  <label
+    >Valor (R$)<br /><input
+      type="number"
+      step="0.01"
+      name="valor"
+      required /></label
+  ><br />
+  <label
+    >Meio<br />
+    <select name="meio">
+      <option>Pix</option>
+      <option>Dinheiro</option>
+      <option>Cartão</option>
+    </select> </label
+  ><br />
+  <label>Usuário responsável<br /><input type="text" name="usuario" /></label
+  ><br />
+  <button type="submit">Registrar Pagamento</button>
+</form>
+{% endblock %}

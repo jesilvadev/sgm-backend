@@ -1,0 +1,267 @@
+{% extends 'base.html' %} {% block content %} {% if dashboard %}
+<h1>Dashboard</h1>
+<div class="grid two" style="margin-top: 10px">
+  <div class="card">
+    <div class="muted" style="font-size: 0.85rem">Total a Receber</div>
+    <div style="font-size: 1.6rem; font-weight: 800">
+      R$ {{ '%.2f'|format(total_a_receber) }}
+    </div>
+  </div>
+  <div class="card">
+    <div class="muted" style="font-size: 0.85rem">Total Vencido</div>
+    <div style="font-size: 1.6rem; font-weight: 800">
+      R$ {{ '%.2f'|format(total_vencido) }}
+    </div>
+  </div>
+</div>
+<div class="grid two" style="margin-top: 10px">
+  <div class="card">
+    <div class="muted" style="font-size: 0.85rem; margin-bottom: 12px">
+      Resumo de Dívidas
+    </div>
+    <div class="grid two" style="gap: 16px">
+      <div>
+        <div style="font-size: 0.75rem; color: var(--muted)">Quitadas</div>
+        <div style="font-size: 1.4rem; font-weight: 700; color: #28a745">
+          {{ qtd_pagas }}
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 0.75rem; color: var(--muted)">Abertas</div>
+        <div style="font-size: 1.4rem; font-weight: 700; color: #3b82f6">
+          {{ qtd_abertas }}
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 0.75rem; color: var(--muted)">Vencidas</div>
+        <div style="font-size: 1.4rem; font-weight: 700; color: #dc3545">
+          {{ qtd_vencidas }}
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 0.75rem; color: var(--muted)">Total</div>
+        <div style="font-size: 1.4rem; font-weight: 700">
+          {{ qtd_pagas + qtd_abertas + qtd_vencidas }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="muted" style="font-size: 0.85rem">Status das Dívidas</div>
+    <canvas id="chartStatus" height="160"></canvas>
+  </div>
+</div>
+
+<div class="grid two" style="margin-top: 10px">
+  <div class="card">
+    <div class="muted" style="font-size: 0.85rem">Top Devedores</div>
+    <canvas id="chartTop" height="180"></canvas>
+  </div>
+  <div class="card">
+    <div class="muted" style="font-size: 0.85rem">Dívidas criadas por mês</div>
+    <canvas id="chartMeses" height="180"></canvas>
+  </div>
+</div>
+
+<div class="card" style="margin-top: 10px">
+  <div class="muted" style="font-size: 0.85rem">Pagamentos por meio</div>
+  <canvas id="chartMeios" height="140"></canvas>
+</div>
+
+<div class="card" style="margin-top: 10px">
+  <h3 style="margin: 0 0 12px; color: var(--text); font-size: 1.1rem">
+    Dívidas Vencidas
+  </h3>
+  {% if dividas_vencidas %}
+  <div style="max-height: 400px; overflow-y: auto">
+    <table id="tabelaVencidas" style="width: 100%; border-collapse: collapse">
+      <thead>
+        <tr style="background: #f7fafc; position: sticky; top: 0">
+          <th
+            style="
+              padding: 10px;
+              text-align: left;
+              font-size: 0.85rem;
+              color: var(--muted);
+              cursor: pointer;
+              user-select: none;
+            "
+            onclick="ordenarTabela('cliente')"
+          >
+            Cliente <span id="sortCliente">⇅</span>
+          </th>
+          <th
+            style="
+              padding: 10px;
+              text-align: left;
+              font-size: 0.85rem;
+              color: var(--muted);
+            "
+          >
+            Descrição
+          </th>
+          <th
+            style="
+              padding: 10px;
+              text-align: right;
+              font-size: 0.85rem;
+              color: var(--muted);
+              cursor: pointer;
+              user-select: none;
+            "
+            onclick="ordenarTabela('saldo')"
+          >
+            Saldo <span id="sortSaldo">⇅</span>
+          </th>
+          <th
+            style="
+              padding: 10px;
+              text-align: center;
+              font-size: 0.85rem;
+              color: var(--muted);
+              cursor: pointer;
+              user-select: none;
+            "
+            onclick="ordenarTabela('vencimento')"
+          >
+            Vencimento <span id="sortVencimento">⇅</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody id="tbodyVencidas">
+        {% for dv in dividas_vencidas %}
+        <tr
+          style="border-top: 1px solid #f1f5f9"
+          data-cliente="{{ dv.cliente_nome }}"
+          data-saldo="{{ dv.saldo }}"
+          data-vencimento="{{ dv.vencimento.strftime('%Y-%m-%d') }}"
+        >
+          <td style="padding: 10px"><strong>{{ dv.cliente_nome }}</strong></td>
+          <td style="padding: 10px; color: var(--muted)">{{ dv.descricao }}</td>
+          <td
+            style="
+              padding: 10px;
+              text-align: right;
+              font-weight: 600;
+              color: var(--danger);
+            "
+          >
+            R$ {{ '%.2f'|format(dv.saldo) }}
+          </td>
+          <td style="padding: 10px; text-align: center; font-size: 0.9rem">
+            {{ dv.vencimento.strftime('%d/%m/%Y') }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="text-align: center; padding: 20px; color: var(--muted)">
+    ✅ Nenhuma dívida vencida no momento
+  </div>
+  {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  const fmt = (n)=> Number(n||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  // Dados do servidor
+  const topLabels = {{ top_labels|tojson|safe }};
+  const topValues = {{ top_values|tojson|safe }};
+  const statusLabels = {{ status_labels|tojson|safe }};
+  const statusValues = {{ status_values|tojson|safe }};
+  const meioLabels = {{ meio_labels|tojson|safe }};
+  const meioValues = {{ meio_values|tojson|safe }};
+  const monthLabels = {{ month_labels|tojson|safe }};
+  const monthValues = {{ month_values|tojson|safe }};
+
+  // Sistema de ordenação da tabela de dívidas vencidas
+  let ordenacaoAtual = { coluna: null, ordem: 'asc' };
+
+  function ordenarTabela(coluna) {
+    const tbody = document.getElementById('tbodyVencidas');
+    const linhas = Array.from(tbody.querySelectorAll('tr'));
+
+    // Define ordem: se mesma coluna, alterna; se nova coluna, começa crescente
+    if (ordenacaoAtual.coluna === coluna) {
+      ordenacaoAtual.ordem = ordenacaoAtual.ordem === 'asc' ? 'desc' : 'asc';
+    } else {
+      ordenacaoAtual.coluna = coluna;
+      ordenacaoAtual.ordem = 'asc';
+    }
+
+    // Ordena as linhas
+    linhas.sort((a, b) => {
+      let valorA, valorB;
+
+      if (coluna === 'cliente') {
+        valorA = a.dataset.cliente.toLowerCase();
+        valorB = b.dataset.cliente.toLowerCase();
+      } else if (coluna === 'saldo') {
+        valorA = parseFloat(a.dataset.saldo);
+        valorB = parseFloat(b.dataset.saldo);
+      } else if (coluna === 'vencimento') {
+        valorA = new Date(a.dataset.vencimento);
+        valorB = new Date(b.dataset.vencimento);
+      }
+
+      let comparacao = 0;
+      if (valorA < valorB) comparacao = -1;
+      if (valorA > valorB) comparacao = 1;
+
+      return ordenacaoAtual.ordem === 'asc' ? comparacao : -comparacao;
+    });
+
+    // Reinsere linhas ordenadas
+    linhas.forEach(linha => tbody.appendChild(linha));
+
+    // Atualiza indicadores visuais
+    document.getElementById('sortCliente').textContent = '⇅';
+    document.getElementById('sortSaldo').textContent = '⇅';
+    document.getElementById('sortVencimento').textContent = '⇅';
+
+    const indicador = ordenacaoAtual.ordem === 'asc' ? '↓' : '↑';
+    if (coluna === 'cliente') document.getElementById('sortCliente').textContent = indicador;
+    if (coluna === 'saldo') document.getElementById('sortSaldo').textContent = indicador;
+    if (coluna === 'vencimento') document.getElementById('sortVencimento').textContent = indicador;
+  }
+
+  // Chart helpers
+  const colors = {
+    primary: '#176b87', accent: '#2b8a7a', accent2: '#6cc8b0', orange: '#f59e0b', red: '#ef4444', blue: '#3b82f6', teal: '#14b8a6'
+  };
+
+  // Status (doughnut)
+  new Chart(document.getElementById('chartStatus'), {
+    type: 'doughnut',
+    data: { labels: statusLabels, datasets: [{ data: statusValues, backgroundColor: [colors.accent, colors.blue, colors.orange, colors.red] }] },
+    options: { plugins: { legend: { position: 'bottom' } } }
+  });
+
+  // Top devedores (bar)
+  new Chart(document.getElementById('chartTop'), {
+    type: 'bar',
+    data: { labels: topLabels, datasets: [{ label: 'Aberto (R$)', data: topValues, backgroundColor: colors.primary }] },
+    options: { scales: { y: { ticks: { callback: (v)=> 'R$ ' + fmt(v) } } } }
+  });
+
+  // Dívidas por mês (line)
+  new Chart(document.getElementById('chartMeses'), {
+    type: 'line',
+    data: { labels: monthLabels, datasets: [{ label: 'Valor de dívidas criadas (R$)', data: monthValues, borderColor: colors.orange, backgroundColor: 'rgba(245, 158, 11, .15)', fill: true, tension: .35 }] },
+    options: { scales: { y: { ticks: { callback: (v)=> 'R$ ' + fmt(v) } } } }
+  });
+
+  // Pagamentos por meio (pie)
+  new Chart(document.getElementById('chartMeios'), {
+    type: 'pie',
+    data: { labels: meioLabels, datasets: [{ data: meioValues, backgroundColor: [colors.accent, colors.primary, colors.orange, colors.teal, colors.red] }] },
+    options: { plugins: { legend: { position: 'bottom' } } }
+  });
+</script>
+{% else %}
+<div class="card" style="padding: 24px">
+  Selecione um cliente no lado esquerdo para ver o perfil.
+</div>
+{% endif %} {% endblock %}

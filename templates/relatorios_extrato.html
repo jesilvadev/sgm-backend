@@ -1,0 +1,22 @@
+{% extends 'base.html' %} {% block content %}
+<h1>Extrato do Cliente</h1>
+<form method="post">
+  <label>Nome do cliente<br /><input type="text" name="termo" /></label>
+  <button type="submit">Buscar</button>
+</form>
+
+{% if cliente %}
+<h2>{{ cliente.nome }}</h2>
+<p>Endereço: {{ cliente.endereco }}</p>
+<h3>Dívidas</h3>
+{% for d in dividas %}
+<div>
+  <p>
+    Valor Original: R$ {{ '%.2f'|format(d.valor_original) }} — Restante: R$ {{
+    '%.2f'|format(d.saldo_devedor) }} — Venc.: {{ d.data_vencimento }} — Status:
+    {{ d.status }}
+  </p>
+</div>
+{% endfor %}
+<p><strong>Total devido: R$ {{ '%.2f'|format(total) }}</strong></p>
+{% endif %} {% endblock %}

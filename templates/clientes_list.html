@@ -1,0 +1,65 @@
+{% extends 'base.html' %} {% block content %}
+<h1>Clientes</h1>
+<p><a href="{{ url_for('main.novo_cliente') }}">Novo Cliente</a></p>
+<table>
+  <tr>
+    <th>Nome</th>
+    <th>CPF</th>
+    <th>Limite</th>
+    <th>Ações</th>
+  </tr>
+  {% for c in clientes %}
+  <tr>
+    <td>{{ c.nome }}</td>
+    <td>{{ c.cpf }}</td>
+    <td>R$ {{ '%.2f'|format(c.limite_credito) }}</td>
+    <td>
+      {% if session.get('user_tipo') == 'Administrador' %}
+      <button
+        class="btn danger small"
+        type="button"
+        onclick="confirmDeleteCliente({{ c.id }}, '{{ c.nome }}')"
+      >
+        Apagar
+      </button>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<!-- Modal de Confirmação de Exclusão de Cliente -->
+<div id="modal-delete-cliente" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">Excluir Cliente</div>
+    <div class="modal-body" id="modal-delete-cliente-body"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModalCliente()">Cancelar</button>
+      <button class="btn danger" id="modal-delete-cliente-btn">
+        Confirmar Exclusão
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function closeModalCliente() {
+    document.getElementById("modal-delete-cliente").classList.remove("show");
+  }
+
+  function confirmDeleteCliente(clienteId, clienteNome) {
+    const modal = document.getElementById("modal-delete-cliente");
+    document.getElementById(
+      "modal-delete-cliente-body"
+    ).innerHTML = `Tem certeza que deseja excluir o cliente:<br/><strong>"${clienteNome}"</strong><br/><br/>Esta ação irá apagar também todas as dívidas, pagamentos e renegociações associadas!<br/><br/>Esta ação não pode ser desfeita!`;
+    modal.classList.add("show");
+
+    document.getElementById("modal-delete-cliente-btn").onclick = function () {
+      fetch(`/clientes/${clienteId}/apagar`, { method: "POST" }).then((r) => {
+        if (r.ok) location.reload();
+        else alert("Erro ao apagar cliente.");
+      });
+    };
+  }
+</script>
+{% endblock %}

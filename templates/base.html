@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SGM - Mercearia</title>
+    <style>
+      :root {
+        --primary: #176b87;
+        --accent: #2b8a7a;
+        --accent-2: #6cc8b0;
+        --bg: #f5f7fb;
+        --panel: #ffffff;
+        --text: #0f1720;
+        --muted: #64748b;
+        --success: #16a34a;
+        --warning: #d97706;
+        --danger: #dc2626;
+        --shadow: 0 6px 18px rgba(15, 23, 32, 0.06);
+        --ring: 0 0 0 3px rgba(23, 107, 135, 0.15);
+        --radius: 12px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial,
+          sans-serif;
+        margin: 0;
+        background: radial-gradient(
+            1200px 800px at 80% -100px,
+            #eaf6ff 0%,
+            transparent 60%
+          ),
+          var(--bg);
+        color: var(--text);
+      }
+      header {
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        padding: 12px 18px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      header .left,
+      header .center,
+      header .right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      header .center {
+        flex: 1;
+        justify-content: center;
+        font-weight: 600;
+      }
+
+      .app-wrap {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 18px;
+        min-height: calc(100vh - 48px);
+        padding: 18px;
+        max-width: 1200px;
+        margin: 18px auto;
+      }
+      .app-wrap.hide-aside {
+        grid-template-columns: 1fr;
+      }
+      .app-wrap.hide-aside .layout-aside {
+        display: none;
+      }
+      aside {
+        background: var(--panel);
+        padding: 14px;
+        border-radius: var(--radius);
+        color: var(--text);
+        box-shadow: var(--shadow);
+      }
+      main {
+        background: var(--panel);
+        padding: 22px;
+        border-radius: var(--radius);
+        min-height: 560px;
+        box-shadow: var(--shadow);
+      }
+      h1 {
+        font-size: 1.6rem;
+        margin: 0 0 12px;
+      }
+      h2 {
+        font-size: 1.3rem;
+        margin: 0 0 10px;
+      }
+      h3 {
+        font-size: 1.1rem;
+        margin: 18px 0 8px;
+        color: var(--muted);
+      }
+
+      .no-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #475569;
+      }
+      .flash {
+        background: #e7f5e6;
+        padding: 10px;
+        margin-bottom: 10px;
+        color: #064;
+        border-radius: 10px;
+        border: 1px solid #b7e4c7;
+      }
+
+      /* Buttons */
+      .btn,
+      button {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: transform 0.08s ease, filter 0.12s ease,
+          box-shadow 0.12s ease;
+      }
+      .btn:hover,
+      button:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+        box-shadow: 0 8px 20px rgba(43, 138, 122, 0.25);
+      }
+      .btn:active,
+      button:active {
+        transform: translateY(0);
+        box-shadow: none;
+      }
+      .btn.ghost {
+        background: transparent;
+        color: var(--primary);
+        border: 1px solid rgba(23, 107, 135, 0.18);
+        box-shadow: none;
+      }
+      .btn.ghost:hover {
+        background: rgba(23, 107, 135, 0.06);
+      }
+      .btn.outline {
+        background: transparent;
+        color: var(--accent);
+        border: 1px solid var(--accent);
+      }
+      .btn.small {
+        padding: 6px 8px;
+        font-size: 0.9rem;
+        border-radius: 8px;
+      }
+      .btn.round {
+        border-radius: 999px;
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        padding: 0;
+      }
+
+      /* Inputs */
+      input[type="text"],
+      input[type="number"],
+      input[type="password"],
+      input[type="email"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #e6eef0;
+        background: #fbfcfc;
+        outline: none;
+        transition: box-shadow 0.15s ease, border-color 0.15s ease;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--primary);
+        box-shadow: var(--ring);
+      }
+      label {
+        color: var(--muted);
+        font-size: 0.92rem;
+        display: inline-block;
+        margin: 6px 0 4px;
+      }
+      form button,
+      form .btn {
+        margin-top: 6px;
+      }
+
+      /* Lists and search */
+      .search-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .search-input {
+        flex: 1;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid #e6eef0;
+        background: #fbfcfc;
+        outline: none;
+        transition: box-shadow 0.15s ease, border-color 0.15s ease;
+      }
+      .search-input:focus {
+        border-color: var(--primary);
+        box-shadow: var(--ring);
+      }
+      .client-list {
+        margin-top: 12px;
+        padding: 6px;
+        max-height: 64vh;
+        overflow: auto;
+      }
+      .client-item {
+        padding: 10px;
+        border-radius: 10px;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), transparent);
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.12s;
+        border: 1px solid #eef3f4;
+      }
+      .client-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
+      .client-item.active {
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        color: #fff;
+        border-color: transparent;
+      }
+      .client-name {
+        font-weight: 600;
+      }
+      .muted {
+        color: var(--muted);
+      }
+
+      /* Cards & helpers */
+      .card {
+        background: #fff;
+        border: 1px solid #eef3f4;
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 4px 16px rgba(15, 23, 32, 0.04);
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .row.between {
+        justify-content: space-between;
+      }
+      .grid.two {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+      .badge.info {
+        background: rgba(23, 107, 135, 0.12);
+        color: var(--primary);
+      }
+      .badge.success {
+        background: rgba(22, 163, 74, 0.12);
+        color: var(--success);
+      }
+      .badge.warning {
+        background: rgba(217, 119, 6, 0.12);
+        color: var(--warning);
+      }
+      .badge.danger {
+        background: rgba(220, 38, 38, 0.12);
+        color: var(--danger);
+      }
+      .section-title {
+        color: var(--muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-size: 0.78rem;
+        margin: 20px 0 8px;
+      }
+
+      /* Tables */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border: 1px solid #eef3f4;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(15, 23, 32, 0.04);
+      }
+      table th,
+      table td {
+        padding: 12px 14px;
+        text-align: left;
+      }
+      table thead th {
+        background: #f7fafc;
+        color: #334155;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      table tbody tr {
+        border-top: 1px solid #f1f5f9;
+      }
+      table tbody tr:hover {
+        background: #f8fbfc;
+      }
+
+      .icon-gear {
+        margin-left: 8px;
+        cursor: pointer;
+        font-size: 1.3rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.15);
+        transition: all 0.2s ease;
+        text-decoration: none;
+      }
+      .icon-gear:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: rotate(90deg);
+      }
+
+      /* Modal */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 32, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 999;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-overlay.show {
+        display: flex;
+      }
+      .modal-box {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        max-width: 440px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(15, 23, 32, 0.2);
+        animation: modalSlideIn 0.2s ease;
+      }
+      @keyframes modalSlideIn {
+        from {
+          transform: translateY(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      .modal-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: var(--text);
+      }
+      .modal-body {
+        color: var(--muted);
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+      .modal-input {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #e6eef0;
+        background: #fbfcfc;
+        outline: none;
+        margin-bottom: 12px;
+        transition: box-shadow 0.15s ease, border-color 0.15s ease;
+      }
+      .modal-input:focus {
+        border-color: var(--primary);
+        box-shadow: var(--ring);
+      }
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+      .btn.danger {
+        background: var(--danger);
+      }
+      .btn.danger:hover {
+        filter: brightness(1.05);
+        box-shadow: 0 8px 20px rgba(220, 38, 38, 0.25);
+      }
+
+      @media (max-width: 900px) {
+        .app-wrap {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto;
+          max-width: 92%;
+          padding: 12px;
+        }
+        .grid.two {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <script>
+      function goHome(){ window.location.href = {{ url_for('main.home')|tojson }}; }
+      function logout(){ window.location.href = {{ url_for('main.logout')|tojson }}; }
+    </script>
+  </head>
+  <body>
+    {% if session.get('user_id') %}
+    <header>
+      <div class="left">
+        <button class="btn" onclick="goHome()">◀ Início</button>
+      </div>
+      <div class="center"><strong>{{ session.get('user_nome') }}</strong></div>
+      <div class="right">
+        {% if session.get('user_tipo') == 'Administrador' %}
+        <a
+          href="{{ url_for('main.admin_config') }}"
+          class="icon-gear"
+          id="icon-gear"
+          title="Configurações"
+          >⚙</a
+        >
+        {% endif %}
+        <button class="btn" onclick="logout()">Sair</button>
+      </div>
+    </header>
+
+    <div class="app-wrap{% if hide_aside %} hide-aside{% endif %}">
+      {% if not hide_aside %}
+      <aside class="layout-aside">
+        <div class="search-row">
+          <input
+            id="client-search"
+            class="search-input"
+            placeholder="Buscar cliente..."
+          />
+          <button
+            id="btn-new-client"
+            class="btn round"
+            title="Adicionar novo cliente"
+          >
+            +
+          </button>
+        </div>
+        <div id="client-list" class="client-list"></div>
+      </aside>
+      {% endif %}
+
+      <main id="main-content">
+        {% with messages = get_flashed_messages() %} {% if messages %} {% for m
+        in messages %}
+        <div class="flash">{{ m }}</div>
+        {% endfor %} {% endif %} {% endwith %} {% block content %}{% endblock %}
+      </main>
+    </div>
+
+    <!-- Modal de Confirmação -->
+    <div id="modal-confirm" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-title" id="modal-confirm-title">Confirmar</div>
+        <div class="modal-body" id="modal-confirm-body"></div>
+        <div class="modal-actions">
+          <button class="btn ghost" onclick="closeModal('modal-confirm')">
+            Cancelar
+          </button>
+          <button class="btn danger" id="modal-confirm-btn">Confirmar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Autenticação Admin -->
+    <div id="modal-admin-auth" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-title">Autenticação de Administrador</div>
+        <div class="modal-body">
+          Para excluir esta dívida, insira as credenciais de um administrador:
+        </div>
+        <input
+          type="text"
+          id="admin-usuario"
+          class="modal-input"
+          placeholder="Usuário administrador"
+        />
+        <input
+          type="password"
+          id="admin-senha"
+          class="modal-input"
+          placeholder="Senha"
+        />
+        <div class="modal-actions">
+          <button class="btn ghost" onclick="closeModal('modal-admin-auth')">
+            Cancelar
+          </button>
+          <button class="btn danger" id="modal-admin-auth-btn">
+            Confirmar Exclusão
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      async function fetchClients(q = "") {
+        const res = await fetch("/api/clientes?q=" + encodeURIComponent(q));
+        const data = await res.json();
+        const list = document.getElementById("client-list");
+        list.innerHTML = "";
+        data.forEach((c) => {
+          const el = document.createElement("div");
+          el.classList.add("client-item");
+          el.dataset.id = c.id;
+          el.innerHTML = `<div class="client-name">${c.nome}</div>`;
+          el.onclick = async () => {
+            // remove active from others
+            document
+              .querySelectorAll(".client-item")
+              .forEach((x) => x.classList.remove("active"));
+            el.classList.add("active");
+            await loadClient(c.id);
+          };
+          list.appendChild(el);
+        });
+      }
+
+      function fmtMoney(n) {
+        return Number(n || 0).toLocaleString("pt-BR", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      }
+      function fmtDate(iso) {
+        try {
+          const d = new Date(iso);
+          return d.toLocaleDateString("pt-BR");
+        } catch (e) {
+          return iso;
+        }
+      }
+
+      async function loadClient(id) {
+        const res = await fetch("/api/cliente/" + id);
+        const data = await res.json();
+        const main = document.getElementById("main-content");
+        // construir perfil do cliente
+        let html = ``;
+        html += `<div class="card" style="margin-bottom:12px;">
+            <div class="row between">
+              <div>
+                <h2 style="margin:0">${data.nome}</h2>
+                <div class="muted">CPF: ${data.cpf || "-"} • Cel: ${
+          data.celular || "-"
+        }</div>
+                <div class="muted">Endereço: ${data.endereco || "-"}</div>
+              </div>
+              <div class="row">
+                <button class="btn" onclick="location.href='/dividas/novo?cliente_id=${data.id}'">Lançar Dívida</button>
+                <button class="btn outline" onclick="location.href='/pagamentos/novo?cliente_id=${data.id}'">Lançar Pagamento</button>
+              </div>
+            </div>
+          </div>`;
+
+        html += `<div class="section-title">Histórico de Dívidas</div>`;
+
+        if (!data.dividas || !data.dividas.length) {
+          html += `<div class="card muted">Nenhuma dívida registrada para este cliente.</div>`;
+        } else {
+          data.dividas.forEach((d) => {
+            const vencida =
+              Number(d.saldo) > 0 && new Date(d.vencimento) < new Date();
+            const isPaga = d.status === "Paga" || Number(d.saldo) === 0;
+            const isReneg = d.status === "Renegociada";
+            let badgeClass = "badge info";
+            let badgeText = d.status || "Pendente";
+            if (isPaga) {
+              badgeClass = "badge success";
+              badgeText = "Paga";
+            } else if (vencida) {
+              badgeClass = "badge danger";
+              badgeText = "Vencida";
+            } else if (isReneg) {
+              badgeClass = "badge warning";
+              badgeText = "Renegociada";
+            }
+
+            html += `<div class="card" style="margin:10px 0;">
+                <div class="row between" style="margin-bottom:6px;">
+                  <div>
+                    <strong>${d.descricao || "Sem descrição"}</strong>
+                    ${
+                      d.parcelado
+                        ? `<span class="badge info" style="margin-left:8px;">${
+                            d.num_parcelas
+                          }x ${
+                            d.juros_parcelamento > 0
+                              ? "(+" + d.juros_parcelamento + "% juros)"
+                              : ""
+                          }</span>`
+                        : ""
+                    }
+                  </div>
+                  <span class="${badgeClass}">${badgeText}</span>
+                </div>
+                <div class="grid two" style="align-items:flex-start;">
+                  <div>
+                    <div class="muted" style="font-size:.78rem;">Valor Original</div>
+                    <div><strong>R$ ${fmtMoney(d.valor_original)}</strong></div>
+                  </div>
+                  <div>
+                    <div class="muted" style="font-size:.78rem;">Restante</div>
+                    <div><strong>R$ ${fmtMoney(d.saldo)}</strong></div>
+                  </div>
+                </div>
+                <div class="muted" style="margin-top:8px;">Vencimento: ${fmtDate(
+                  d.vencimento
+                )}</div>
+                ${
+                  d.pagamentos && d.pagamentos.length
+                    ? `
+                  <div style="margin-top:8px;">
+                    <div class="muted" style="font-size:.78rem; margin-bottom:4px;">Pagamentos</div>
+                    ${d.pagamentos
+                      .map(
+                        (
+                          p
+                        ) => `<div class="row" style="justify-content:space-between;">
+                        <div>${fmtDate(p.data)} (${p.meio})</div>
+                        <div><strong>R$ ${fmtMoney(p.valor)}</strong></div>
+                      </div>`
+                      )
+                      .join("")}
+                  </div>`
+                    : ""
+                }
+                ${
+                  d.renegociacoes && d.renegociacoes.length
+                    ? `
+                  <div style="margin-top:8px;">
+                    <div class="muted" style="font-size:.78rem; margin-bottom:4px;">Renegociações</div>
+                    ${d.renegociacoes
+                      .map(
+                        (r) =>
+                          `<div>${fmtDate(r.data)} → ${fmtDate(
+                            r.nova_data_venc
+                          )} (+${r.juros}%)</div>`
+                      )
+                      .join("")}
+                  </div>`
+                    : ""
+                }
+                ${
+                  d.parcelas && d.parcelas.length > 0
+                    ? `<div style="margin-top:12px; border-top:1px solid #eee; padding-top:10px;">
+                    <div class="muted" style="font-size:.85rem; margin-bottom:8px;">📋 Parcelas:</div>
+                    ${d.parcelas
+                      .map((p) => {
+                        const statusColors = {
+                          Pendente: "#ffc107",
+                          Paga: "#28a745",
+                          Vencida: "#dc3545",
+                        };
+                        const statusColor = statusColors[p.status] || "#6c757d";
+                        return `<div style="font-size:.8rem; margin:4px 0; padding:6px; background:#f8f9fa; border-radius:4px;">
+                          <div class="row between" style="align-items:center;">
+                            <div><strong>Parcela ${
+                              p.numero
+                            }</strong> - R$ ${fmtMoney(p.valor_parcela)}</div>
+                            <span style="font-size:.75rem; color:${statusColor}; font-weight:600;">● ${
+                          p.status
+                        }</span>
+                          </div>
+                          <div class="muted" style="font-size:.75rem; margin-top:2px;">
+                            Vencimento: ${fmtDate(p.data_vencimento)}
+                            ${
+                              p.valor_pago > 0
+                                ? ` | Pago: R$ ${fmtMoney(p.valor_pago)}`
+                                : ""
+                            }
+                          </div>
+                        </div>`;
+                      })
+                      .join("")}
+                  </div>`
+                    : ""
+                }
+                <div style="margin-top:10px; display:flex; gap:8px;">
+                  ${
+                    vencida
+                      ? `<button class="btn small" onclick="location.href='/dividas/${d.id}/renegociar'">⚡ Renegociar</button>`
+                      : ""
+                  }
+                  <button class="btn small danger" onclick="apagarDivida(${
+                    d.id
+                  }, '${
+              d.descricao ? d.descricao.replace(/'/g, "\\'") : "Sem descrição"
+            }')">🗑 Apagar</button>
+                </div>
+              </div>`;
+          });
+        }
+
+        main.innerHTML = html;
+      }
+
+      function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove("show");
+      }
+
+      function apagarDivida(dividaId, descricao) {
+        const userTipo = '{{ session.get("user_tipo") }}';
+        if (userTipo === "Administrador") {
+          // Modal de confirmação para admin
+          const modal = document.getElementById("modal-confirm");
+          document.getElementById("modal-confirm-title").textContent =
+            "Excluir Dívida";
+          document.getElementById(
+            "modal-confirm-body"
+          ).innerHTML = `Tem certeza que deseja apagar a dívida:<br/><strong>"${descricao}"</strong><br/><br/>Esta ação não pode ser desfeita!`;
+          modal.classList.add("show");
+
+          document.getElementById("modal-confirm-btn").onclick = function () {
+            fetch(`/dividas/${dividaId}/apagar`, { method: "POST" }).then(
+              (r) => {
+                if (r.ok) location.reload();
+                else {
+                  closeModal("modal-confirm");
+                  alert("Erro ao apagar dívida.");
+                }
+              }
+            );
+          };
+        } else {
+          // Modal de autenticação para caixista
+          const modal = document.getElementById("modal-admin-auth");
+          modal.classList.add("show");
+          document.getElementById("admin-usuario").value = "";
+          document.getElementById("admin-senha").value = "";
+
+          document.getElementById("modal-admin-auth-btn").onclick =
+            function () {
+              const usuario = document.getElementById("admin-usuario").value;
+              const senha = document.getElementById("admin-senha").value;
+              if (!usuario || !senha) {
+                alert("Preencha usuário e senha.");
+                return;
+              }
+              fetch(`/dividas/${dividaId}/apagar`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ usuario, senha }),
+              }).then((r) => {
+                if (r.ok) location.reload();
+                else
+                  r.text().then((t) => {
+                    closeModal("modal-admin-auth");
+                    alert(t || "Usuário/senha inválidos ou erro ao apagar.");
+                  });
+              });
+            };
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("client-search");
+        if (searchInput) {
+          searchInput.addEventListener("input", (e) => {
+            fetchClients(e.target.value);
+          });
+        }
+        const btnNewClient = document.getElementById("btn-new-client");
+        if (btnNewClient) {
+          btnNewClient.addEventListener("click", () => {
+            location.href = "/clientes/novo";
+          });
+        }
+        const gear = document.getElementById("icon-gear");
+        if (gear) {
+          gear.addEventListener("click", function (e) {
+            // Oculta a aside imediatamente
+            const appWrap = document.querySelector(".app-wrap");
+            if (appWrap) appWrap.classList.add("hide-aside");
+            // segue a navegação padrão
+          });
+        }
+        fetchClients();
+        
+        // Verifica se há cliente_id na URL para carregar automaticamente
+        // MAS APENAS se estiver na página /home
+        const urlParams = new URLSearchParams(window.location.search);
+        const clienteId = urlParams.get('cliente_id');
+        const isHomePage = window.location.pathname === '/home';
+        
+        if (clienteId && isHomePage) {
+          // Pequeno delay para garantir que DOM está pronto
+          setTimeout(() => {
+            loadClient(parseInt(clienteId));
+          }, 100);
+        }
+      });
+    </script>
+
+    {% else %} {% with messages = get_flashed_messages() %} {% if messages %} {%
+    for m in messages %}
+    <div class="flash">{{ m }}</div>
+    {% endfor %} {% endif %} {% endwith %}
+    <div style="padding: 40px"></div>
+    {% endif %}
+  </body>
+</html>

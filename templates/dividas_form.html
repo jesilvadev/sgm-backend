@@ -1,0 +1,73 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Nova Dívida{% if preselect %} - {{ cliente_nome }}{% endif %}</h2>
+
+<form method="post">
+  {% if preselect %}
+  <input type="hidden" name="cliente_id" value="{{ preselect }}" />
+  <p><strong>Cliente:</strong> {{ cliente_nome }}</p>
+  {% else %}
+  <label>Cliente:</label><br />
+  <select name="cliente_id" required>
+    <option value="">Selecione um cliente</option>
+    {% for c in clientes %}
+    <option value="{{ c.id }}">{{ c.nome }}</option>
+    {% endfor %}
+  </select>
+  <br /><br />
+  {% endif %}
+
+  <label>Valor (R$):</label><br />
+  <input type="number" step="0.01" name="valor" required />
+  <br /><br />
+
+  <label>Descrição:</label><br />
+  <input type="text" name="descricao" placeholder="Ex: Compras do mês" />
+  <br /><br />
+
+  <label>Prazo (dias):</label><br />
+  <input type="number" name="prazo" value="30" />
+  <br /><br />
+
+  <label>Número de Parcelas:</label><br />
+  <input
+    type="number"
+    id="num_parcelas"
+    name="num_parcelas"
+    value="1"
+    min="1"
+  />
+  <br /><br />
+
+  <div id="juros_container" style="display: none">
+    <label>Juros do Parcelamento (%):</label><br />
+    <input
+      type="number"
+      step="0.01"
+      id="juros_parcelamento"
+      name="juros_parcelamento"
+      value="0"
+      min="0"
+    />
+    <br /><br />
+  </div>
+
+  <button class="btn" type="submit">Registrar Dívida</button>
+  <a href="{{ url_for('main.home') }}" class="btn ghost">Cancelar</a>
+</form>
+
+<script>
+  // Mostra/oculta campo de juros baseado no número de parcelas
+  const numParcelasInput = document.getElementById("num_parcelas");
+  const jurosContainer = document.getElementById("juros_container");
+
+  numParcelasInput.addEventListener("input", function () {
+    const numParcelas = parseInt(this.value) || 1;
+    if (numParcelas > 1) {
+      jurosContainer.style.display = "block";
+    } else {
+      jurosContainer.style.display = "none";
+      document.getElementById("juros_parcelamento").value = "0";
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,6 @@
+Flask>=2.2
+Flask-SQLAlchemy>=3.0
+Werkzeug>=2.2
+python-dateutil>=2.9
+flasgger>=0.9.7
+flask-cors>=4.0

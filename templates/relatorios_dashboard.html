@@ -1,0 +1,13 @@
+{% extends 'base.html' %} {% block content %}
+<h1>Dashboard</h1>
+<p>Total a Receber: R$ {{ '%.2f'|format(total_a_receber) }}</p>
+<p>Total Vencido: R$ {{ '%.2f'|format(total_vencido) }}</p>
+<p>Dívidas Quitadas: {{ qtd_pagas }}</p>
+
+<h3>Top Devedores</h3>
+<ul>
+  {% for nome, valor in ranking %}
+  <li>{{ nome }} — R$ {{ '%.2f'|format(valor) }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

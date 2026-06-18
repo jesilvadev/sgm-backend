@@ -1,0 +1,159 @@
+{% extends 'base.html' %} {% block content %}
+<h1>Configurações</h1>
+<div class="grid two" style="gap: 16px; grid-template-columns: 240px 1fr">
+  <aside class="card" style="padding: 0">
+    <div class="section-title" style="margin: 12px">Opções</div>
+    <div id="config-menu">
+      <button
+        class="btn ghost"
+        style="width: 100%; text-align: left"
+        onclick="showSection('clientes')"
+      >
+        Gerenciar Clientes
+      </button>
+      <button
+        class="btn ghost"
+        style="width: 100%; text-align: left"
+        onclick="showSection('usuarios')"
+      >
+        Gerenciar Funcionários
+      </button>
+    </div>
+  </aside>
+  <section class="card">
+    <div id="section-clientes">
+      <h2>Gerenciar Clientes</h2>
+      <p>
+        <a class="btn" href="{{ url_for('main.novo_cliente') }}"
+          >Novo Cliente</a
+        >
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Celular</th>
+            <th>Endereço</th>
+            <th>Limite</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in clientes %}
+          <tr>
+            <td>{{ c.nome }}</td>
+            <td>{{ c.cpf }}</td>
+            <td>{{ c.celular }}</td>
+            <td>{{ c.endereco }}</td>
+            <td>R$ {{ '%.2f'|format(c.limite_credito) }}</td>
+            <td>
+              <button
+                class="btn danger small"
+                type="button"
+                onclick="confirmDeleteCliente({{ c.id }}, '{{ c.nome }}')"
+              >
+                Apagar
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div id="section-usuarios" style="display: none">
+      <h2>Gerenciar Funcionários</h2>
+      <p>
+        <a class="btn" href="{{ url_for('main.admin_novo_usuario') }}"
+          >Novo Funcionário</a
+        >
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Tipo</th>
+            <th>Email</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in usuarios %}
+          <tr>
+            <td>{{ u.nome }}</td>
+            <td>{{ u.tipo }}</td>
+            <td>{{ u.email }}</td>
+            <td>
+              <button
+                class="btn danger small"
+                type="button"
+                onclick="confirmDeleteUser({{ u.id }}, '{{ u.nome }}')"
+              >
+                Remover
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+  function showSection(id) {
+    document.getElementById("section-clientes").style.display =
+      id === "clientes" ? "" : "none";
+    document.getElementById("section-usuarios").style.display =
+      id === "usuarios" ? "" : "none";
+  }
+  // Reusa modais já existentes em clientes_list.html / usuarios_list.html
+  function closeModalCliente() {
+    const el = document.getElementById("modal-delete-cliente");
+    if (el) el.classList.remove("show");
+  }
+  function confirmDeleteCliente(clienteId, clienteNome) {
+    let el = document.getElementById("modal-delete-cliente");
+    if (!el) {
+      const modal = `<div id="modal-delete-cliente" class="modal-overlay"><div class="modal-box"><div class="modal-title">Excluir Cliente</div><div class="modal-body" id="modal-delete-cliente-body"></div><div class="modal-actions"><button class="btn ghost" onclick="closeModalCliente()">Cancelar</button><button class="btn danger" id="modal-delete-cliente-btn">Confirmar Exclusão</button></div></div></div>`;
+      document.body.insertAdjacentHTML("beforeend", modal);
+      el = document.getElementById("modal-delete-cliente");
+    }
+    document.getElementById(
+      "modal-delete-cliente-body"
+    ).innerHTML = `Tem certeza que deseja excluir o cliente:<br/><strong>"${clienteNome}"</strong><br/><br/>Esta ação irá apagar também todas as dívidas, pagamentos e renegociações associadas!`;
+    el.classList.add("show");
+    document.getElementById("modal-delete-cliente-btn").onclick = function () {
+      fetch(`/clientes/${clienteId}/apagar`, { method: "POST" }).then((r) => {
+        if (r.ok) location.reload();
+        else alert("Erro ao apagar cliente.");
+      });
+    };
+  }
+
+  function closeModalUser() {
+    const el = document.getElementById("modal-delete-user");
+    if (el) el.classList.remove("show");
+  }
+  function confirmDeleteUser(userId, userName) {
+    let el = document.getElementById("modal-delete-user");
+    if (!el) {
+      const modal = `<div id="modal-delete-user" class="modal-overlay"><div class="modal-box"><div class="modal-title">Excluir Usuário</div><div class="modal-body" id="modal-delete-user-body"></div><div class="modal-actions"><button class="btn ghost" onclick="closeModalUser()">Cancelar</button><button class="btn danger" id="modal-delete-user-btn">Confirmar Exclusão</button></div></div></div>`;
+      document.body.insertAdjacentHTML("beforeend", modal);
+      el = document.getElementById("modal-delete-user");
+    }
+    document.getElementById(
+      "modal-delete-user-body"
+    ).innerHTML = `Tem certeza que deseja excluir o usuário:<br/><strong>"${userName}"</strong>?`;
+    el.classList.add("show");
+    document.getElementById("modal-delete-user-btn").onclick = function () {
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = `/admin/usuarios/${userId}/delete`;
+      document.body.appendChild(form);
+      form.submit();
+    };
+  }
+</script>
+{% endblock %}

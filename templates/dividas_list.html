@@ -1,0 +1,28 @@
+{% extends 'base.html' %} {% block content %}
+<h1>Dívidas</h1>
+<p><a href="{{ url_for('main.novo_divida') }}">Nova Dívida</a></p>
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Cliente</th>
+    <th>Valor</th>
+    <th>Restante</th>
+    <th>Vencimento</th>
+    <th>Status</th>
+    <th>Ações</th>
+  </tr>
+  {% for d in dividas %}
+  <tr>
+    <td>{{ d.id }}</td>
+    <td>{{ d.cliente.nome }}</td>
+    <td>R$ {{ '%.2f'|format(d.valor_original) }}</td>
+    <td>R$ {{ '%.2f'|format(d.saldo_devedor) }}</td>
+    <td>{{ d.data_vencimento }}</td>
+    <td>{{ d.status }}</td>
+    <td>
+      <a href="{{ url_for('main.pagar_divida', divida_id=d.id) }}">Pagar</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

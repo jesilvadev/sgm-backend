@@ -1,0 +1,26 @@
+{% extends 'base.html' %} {% block content %}
+<h1>Novo Cliente</h1>
+<form method="post">
+  <label>Nome<br /><input type="text" name="nome" required /></label><br />
+  <label>CPF<br /><input type="text" name="cpf" /></label><br />
+  <label>Celular<br /><input type="text" name="celular" /></label><br />
+  <label>Endereço<br /><input type="text" name="endereco" /></label><br />
+  <label
+    >Nível<br />
+    <select name="nivel">
+      <option value="Novo">Novo</option>
+      <option value="Bom Pagador">Bom Pagador</option>
+      <option value="Atraso Frequente">Atraso Frequente</option>
+      <option value="Bloqueado">Bloqueado</option>
+    </select> </label
+  ><br />
+  <label
+    >Limite de Crédito<br /><input
+      type="number"
+      step="0.01"
+      name="limite"
+      value="200.00" /></label
+  ><br />
+  <button type="submit">Salvar</button>
+</form>
+{% endblock %}
