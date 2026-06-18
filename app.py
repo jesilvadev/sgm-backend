@@ -69,7 +69,13 @@ def create_app():
     db.init_app(app)
 
     # Habilita CORS para o React (porta 5173 padrão do Vite)
-    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173", "http://localhost:3000", "http://localhost:5001"]}}, supports_credentials=True)
+    CORS(app, resources={r"/api/*": {"origins": [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://localhost:5001",
+        "https://sgm-gestao.web.app",
+        "https://sgm-gestao.firebaseapp.com",
+    ]}}, supports_credentials=True)
 
     # Registra todas as rotas da aplicação
     register_routes(app)
