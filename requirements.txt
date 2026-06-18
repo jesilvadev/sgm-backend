@@ -4,3 +4,6 @@ Werkzeug>=2.2
 python-dateutil>=2.9
 flasgger>=0.9.7
 flask-cors>=4.0
+psycopg2-binary>=2.9
+python-dotenv>=1.0
+gunicorn>=21.2

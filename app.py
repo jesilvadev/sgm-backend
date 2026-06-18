@@ -11,9 +11,13 @@ Funcionalidades:
 - Sistema de autenticação (Admin/Caixa)
 """
 
+import os
+from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 from flasgger import Swagger
+
+load_dotenv()
 from web.models import db, Usuario
 from werkzeug.security import generate_password_hash
 from web.routes import register_routes
@@ -53,9 +57,10 @@ def create_app():
     app = Flask(__name__)
     
     # Configurações do banco de dados
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sgm.db'  # Banco SQLite local
+    # Em produção define DATABASE_URL no .env com a string do PostgreSQL
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///sgm.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Desativa warnings desnecessários
-    app.config['SECRET_KEY'] = 'troque-esta-chave-por-uma-segura'  # Para sessões
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'troque-esta-chave-por-uma-segura')
     app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
     app.config['SESSION_COOKIE_HTTPONLY'] = True
     app.config['SESSION_COOKIE_SECURE'] = False
