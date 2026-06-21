@@ -1140,7 +1140,11 @@ def register_routes(app):
 
         if not nome:
             return jsonify({'erro': 'Nome é obrigatório'}), 400
-
+        
+        cpf = data.get('cpf')
+        if cpf and len(''.join(filter(str.isdigit, cpf))) != 11:
+            return jsonify({'erro': 'CPF deve conter 11 números'}), 400
+        
         if Cliente.query.filter_by(nome=nome).first():
             return jsonify({'erro': 'Já existe um cliente com este nome'}), 409
 
