@@ -13,7 +13,7 @@ Funcionalidades:
 
 import os
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flasgger import Swagger
 
@@ -99,7 +99,16 @@ def create_app():
             db.session.add(admin)
             db.session.commit()
             print("✓ Usuário administrador criado: adm/adm")
-
+    @app.errorhandler(404)
+    def not_found(e):
+        if request.path.startswith('/api/'):
+            return jsonify({'erro': 'Rota nao encontrada'}), 404
+        return e
+    @app.errorhandler(500)
+    def server_error(e):
+        if request.path.startswith('/api/'):
+            return jsonify({'erro': 'Erro interno no servidor'}), 500
+        return e
     return app
 
 
