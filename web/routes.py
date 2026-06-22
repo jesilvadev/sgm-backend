@@ -1347,7 +1347,9 @@ def register_routes(app):
         if status:
             query = query.filter_by(status=status)
 
-        dividas = query.order_by(Divida.data_vencimento).all()
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
+        dividas = query.order_by(Divida.data_vencimento).paginate(page=page, per_page=per_page, error_out=False).items
         return jsonify([
             {
                 'id': d.id,
