@@ -9,12 +9,12 @@ app = create_app()
 
 with app.app_context():
     # Limpar dados existentes
-    print('🗑️ Limpando banco de dados...')
+    print('Limpar dados existentes...')
     db.drop_all()
     db.create_all()
     
     # Usuários
-    print('👥 Criando usuários...')
+    print('Criando usuarios...')
     admin = Usuario(nome='adm', senha_hash=generate_password_hash('adm'), tipo='Administrador')
     caixa = Usuario(nome='caixa', senha_hash=generate_password_hash('caixa'), tipo='Caixa')
     gerente = Usuario(nome='gerente', senha_hash=generate_password_hash('gerente'), tipo='Administrador')
@@ -22,7 +22,7 @@ with app.app_context():
     db.session.commit()
 
     # Clientes - Expandido para 20 clientes
-    print('🧑 Criando clientes...')
+    print('Criando clientes...')
     clientes_data = [
         {'nome': 'Aline Souza', 'cpf': '11111111111', 'celular': '11999990001', 'endereco': 'Rua das Flores, 123'},
         {'nome': 'Bruno Lima', 'cpf': '22222222222', 'celular': '11999990002', 'endereco': 'Av. Central, 456'},
@@ -53,7 +53,7 @@ with app.app_context():
     db.session.commit()
 
     # Dívidas variadas: vencidas, em dia, pagas, renegociadas, parceladas
-    print('💰 Criando dívidas diversas...')
+    print('Criando dividas diversas...')
     hoje = date.today()
     descricoes = ['Compras do mês', 'Produtos alimentícios', 'Bebidas', 'Limpeza', 'Higiene pessoal', 
                   'Hortifruti', 'Congelados', 'Padaria', 'Açougue', 'Diversos']
@@ -265,18 +265,18 @@ with app.app_context():
     total_renegociacoes = Renegociacao.query.count()
     total_parcelas = Parcela.query.count()
     
-    print('\n✅ Seed concluído com sucesso!')
+    print('\nSeed concluido com sucesso!')
     print('=' * 50)
-    print(f'👥 Usuários criados: 3')
-    print(f'🧑 Clientes criados: {total_clientes}')
-    print(f'💰 Dívidas criadas: {total_dividas}')
-    print(f'  ├─ ⏰ Vencidas: {total_vencidas}')
-    print(f'  ├─ ✅ Em dia: {total_em_dia}')
-    print(f'  ├─ 💚 Pagas: {total_pagas}')
-    print(f'  ├─ 🔄 Renegociadas: {total_renegociadas}')
-    print(f'  └─ 📊 Parceladas: {total_parceladas}')
-    print(f'💵 Pagamentos registrados: {total_pagamentos}')
-    print(f'🔄 Renegociações feitas: {total_renegociacoes}')
-    print(f'📋 Parcelas criadas: {total_parcelas}')
+    print(f'Usuarios criados: 3')
+    print(f'Clientes criados: {total_clientes}')
+    print(f'Dividas criadas: {total_dividas}')
+    print(f'  |- Vencidas: {total_vencidas}')
+    print(f'  |- Em dia: {total_em_dia}')
+    print(f'  |- Pagas: {total_pagas}')
+    print(f'  |- Renegociadas: {total_renegociadas}')
+    print(f'  |- Parceladas: {total_parceladas}')
+    print(f'Pagamentos registrados: {total_pagamentos}')
+    print(f'Renegociacoes feitas: {total_renegociacoes}')
+    print(f'Parcelas criadas: {total_parcelas}')
     print('=' * 50)
-    print('\n🚀 Agora execute: flask run')
+    print('\nAgora execute: flask run')
