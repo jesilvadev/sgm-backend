@@ -207,6 +207,16 @@ def register_routes(app):
         # Caixa: tela simples sem dashboard
         return render_template('home.html', dashboard=False)
 
+    # ==================== API - HEALTH CHECK ====================
+
+    @bp.route('/api/health')
+    def api_health():
+        try:
+            db.session.execute(db.text('SELECT 1'))
+            return jsonify({'status': 'operational'}), 200
+        except Exception as e:
+            return jsonify({'status': 'outage', 'detail': str(e)}), 503
+
     # ==================== API - BUSCA DE CLIENTES ====================
     
     @bp.route('/api/clientes')
