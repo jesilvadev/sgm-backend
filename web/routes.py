@@ -1678,8 +1678,4 @@ def register_routes(app):
         })
 
     # Registra todas as rotas no Flask
-    @bp.route('/api/health')
-    def api_health():
-      """Verifica se a API está no ar"""
-      return jsonify({'status': 'ok'})
     app.register_blueprint(bp)
