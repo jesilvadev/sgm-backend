@@ -211,6 +211,32 @@ def register_routes(app):
 
     @bp.route('/api/health')
     def api_health():
+        """
+        Verifica o status do sistema
+        ---
+        summary: Health check
+        tags:
+          - Sistema
+        responses:
+          200:
+            description: Sistema operacional
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: operational
+          503:
+            description: Sistema com instabilidade
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: outage
+                detail:
+                  type: string
+        """
         try:
             db.session.execute(db.text('SELECT 1'))
             return jsonify({'status': 'operational'}), 200
